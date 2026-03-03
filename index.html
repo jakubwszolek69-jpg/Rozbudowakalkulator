@@ -102,7 +102,9 @@ th {
 <label>Ilość nowych paneli PV:
   <input type="number" id="newPanels" value="0" min="0" step="1">
 </label>
-
+<label>
+  <input type="checkbox" id="fullBackup"> Pełny backup (+1500 PLN)
+</label>
 <button onclick="calculate()">Oblicz koszt</button>
 <span id="toggleDiscount" style="cursor:pointer; font-size:20px; margin-left:10px;">⭐</span>
 
@@ -127,26 +129,29 @@ function calculate() {
 
   const pvPower = parseFloat(document.getElementById('pvPower').value);
   const batterySize = parseInt(document.getElementById('batterySize').value);
-
-// Stałe ceny magazynów
-const batteryPrices = {
-  5: 5000,
-  10: 8000,
-  12: 9000,
-  14: 10000,
-  16: 11000,
-  24: 15000
-};
-
-const batteryCost = batteryPrices[batterySize];
   const newPanels = parseInt(document.getElementById('newPanels').value);
   const rabat = parseFloat(document.getElementById('rabat').value) || 0;
 
+  // Stałe ceny magazynów
+  const batteryPrices = {
+    5: 5000,
+    10: 8000,
+    12: 9000,
+    14: 10000,
+    16: 11000,
+    24: 15000
+  };
+
+  const batteryCost = batteryPrices[batterySize];
+
   const inverterCost = pvPower * 2200;
-  const batteryCost = batterySize * 900;
   const panelsCost = newPanels * 500;
 
-  const totalCost = inverterCost + batteryCost + panelsCost + rabat;
+  // BACKUP
+  const fullBackup = document.getElementById('fullBackup')?.checked || false;
+  const backupCost = fullBackup ? 1500 : 0;
+
+  const totalCost = inverterCost + batteryCost + panelsCost + backupCost + rabat;
 
   document.getElementById('result').innerHTML = `
     <table>
@@ -155,6 +160,7 @@ const batteryCost = batteryPrices[batterySize];
       <tr><td>Wymiana falownika</td><td>${formatCurrency(inverterCost)}</td></tr>
       <tr><td>Magazyn energii</td><td>${batterySize} kWh</td></tr>
       <tr><td>Koszt magazynu</td><td>${formatCurrency(batteryCost)}</td></tr>
+      <tr><td>Backup</td><td>${fullBackup ? 'Tak' : 'Nie'}</td></tr>
       <tr><td>Nowe panele</td><td>${newPanels} szt.</td></tr>
       <tr><td>Koszt paneli</td><td>${formatCurrency(panelsCost)}</td></tr>
       <tr><th>Łączny koszt inwestycji</th><th>${formatCurrency(totalCost)}</th></tr>
