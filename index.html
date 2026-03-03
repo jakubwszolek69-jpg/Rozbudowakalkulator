@@ -88,8 +88,15 @@ th {
   <input type="number" id="pvPower" value="5" min="1" step="0.1">
 </label>
 
-<label>Pojemność magazynu energii (kWh, 5–50):
-  <input type="number" id="batterySize" value="5" min="5" max="50" step="1">
+<label>Pojemność magazynu energii:
+  <select id="batterySize">
+    <option value="5">5 kWh</option>
+    <option value="10">10 kWh</option>
+    <option value="12">12 kWh</option>
+    <option value="14">14 kWh</option>
+    <option value="16">16 kWh</option>
+    <option value="24">24 kWh</option>
+  </select>
 </label>
 
 <label>Ilość nowych paneli PV:
@@ -119,12 +126,21 @@ document.getElementById('toggleDiscount').addEventListener('click', function() {
 function calculate() {
 
   const pvPower = parseFloat(document.getElementById('pvPower').value);
-  let batterySize = parseFloat(document.getElementById('batterySize').value);
+  const batterySize = parseInt(document.getElementById('batterySize').value);
+
+// Stałe ceny magazynów
+const batteryPrices = {
+  5: 5000,
+  10: 8000,
+  12: 9000,
+  14: 10000,
+  16: 11000,
+  24: 15000
+};
+
+const batteryCost = batteryPrices[batterySize];
   const newPanels = parseInt(document.getElementById('newPanels').value);
   const rabat = parseFloat(document.getElementById('rabat').value) || 0;
-
-  if (batterySize < 5) batterySize = 5;
-  if (batterySize > 50) batterySize = 50;
 
   const inverterCost = pvPower * 2200;
   const batteryCost = batterySize * 900;
