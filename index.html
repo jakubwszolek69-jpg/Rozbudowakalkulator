@@ -3,15 +3,85 @@
 <head>
 <meta charset="UTF-8">
 <title>Kalkulator rozbudowy PV</title>
+
 <style>
-  body { font-family: Arial, sans-serif; padding: 20px; }
-  label { display: block; margin-top: 10px; }
-  input { padding: 5px; margin-top: 5px; width: 80px; }
-  button { margin-top: 15px; padding: 10px 15px; }
-  .result { margin-top: 20px; font-weight: bold; }
+body {
+  font-family: Arial, sans-serif;
+  padding: 30px;
+  background-color: #f5f7fa;
+  position: relative;
+}
+
+/* Logo w prawym górnym rogu */
+body::after {
+  content: "";
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 300px;
+  height: 300px;
+  background-image: url('logo.png'); /* plik w tym samym folderze */
+  background-repeat: no-repeat;
+  background-size: contain;
+  opacity: 0.08;
+  pointer-events: none;
+}
+
+h2 {
+  margin-bottom: 20px;
+}
+
+label {
+  display: block;
+  margin-top: 12px;
+}
+
+input {
+  padding: 6px;
+  margin-top: 4px;
+  width: 120px;
+}
+
+button {
+  margin-top: 20px;
+  padding: 10px 15px;
+  border-radius: 6px;
+  cursor: pointer;
+  background-color: #1e88e5;
+  color: white;
+  border: none;
+}
+
+button:hover {
+  background-color: #1565c0;
+}
+
+table {
+  width: 100%;
+  margin-top: 25px;
+  border-collapse: collapse;
+  background: white;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+
+th, td {
+  padding: 12px;
+  border: 1px solid #e0e0e0;
+}
+
+th {
+  background-color: #f0f0f0;
+  text-align: left;
+}
+
+.result {
+  margin-top: 20px;
+}
 </style>
 </head>
+
 <body>
+
 <h2>Kalkulator rozbudowy instalacji PV</h2>
 
 <label>Moc istniejącej instalacji PV (kWp):
@@ -27,7 +97,7 @@
 </label>
 
 <button onclick="calculate()">Oblicz koszt</button>
-  <span id="toggleDiscount" style="cursor:pointer; font-size:20px; margin-left:10px;">⭐</span>
+<span id="toggleDiscount" style="cursor:pointer; font-size:20px; margin-left:10px;">⭐</span>
 
 <label id="discountBox" style="display:none; margin-top:10px;">
   Rabat (PLN):
@@ -37,28 +107,43 @@
 <div class="result" id="result"></div>
 
 <script>
+function formatCurrency(num) {
+  return num.toLocaleString('pl-PL') + " PLN";
+}
+
+document.getElementById('toggleDiscount').addEventListener('click', function() {
+  const box = document.getElementById('discountBox');
+  box.style.display = box.style.display === 'none' ? 'block' : 'none';
+});
+
 function calculate() {
-    const pvPower = parseFloat(document.getElementById('pvPower').value);
-    let batterySize = parseFloat(document.getElementById('batterySize').value);
-    const newPanels = parseInt(document.getElementById('newPanels').value);
-    const rabat = parseFloat(document.getElementById('rabat').value);
 
-    // ograniczenia pojemności magazynu
-    if (batterySize < 5) batterySize = 5;
-    if (batterySize > 50) batterySize = 50;
+  const pvPower = parseFloat(document.getElementById('pvPower').value);
+  let batterySize = parseFloat(document.getElementById('batterySize').value);
+  const newPanels = parseInt(document.getElementById('newPanels').value);
+  const rabat = parseFloat(document.getElementById('rabat').value) || 0;
 
-    const inverterCost = pvPower * 2200; // 2200 zł/kWp
-    const batteryCost = batterySize * 900; // 900 zł/kWh
-    const panelsCost = newPanels * 500; // 500 zł za panel
-    const totalCost = inverterCost + batteryCost + panelsCost + rabat; // dodajemy wartość rabatu
+  if (batterySize < 5) batterySize = 5;
+  if (batterySize > 50) batterySize = 50;
 
-    document.getElementById('result').innerHTML = `
-      <p>Koszt wymiany falownika (${pvPower.toFixed(1)} kWp): ${inverterCost.toLocaleString()} PLN</p>
-      <p>Koszt magazynu ${batterySize} kWh: ${batteryCost.toLocaleString()} PLN</p>
-      <p>Koszt nowych paneli (${newPanels} szt.): ${panelsCost.toLocaleString()} PLN</p>
-    
-      <p><strong>Łączny koszt inwestycji: ${totalCost.toLocaleString()} PLN</strong></p>
-    `;
+  const inverterCost = pvPower * 2200;
+  const batteryCost = batterySize * 900;
+  const panelsCost = newPanels * 500;
+
+  const totalCost = inverterCost + batteryCost + panelsCost + rabat;
+
+  document.getElementById('result').innerHTML = `
+    <table>
+      <tr><th colspan="2">Podsumowanie rozbudowy instalacji</th></tr>
+      <tr><td>Moc instalacji</td><td>${pvPower.toFixed(1)} kWp</td></tr>
+      <tr><td>Wymiana falownika</td><td>${formatCurrency(inverterCost)}</td></tr>
+      <tr><td>Magazyn energii</td><td>${batterySize} kWh</td></tr>
+      <tr><td>Koszt magazynu</td><td>${formatCurrency(batteryCost)}</td></tr>
+      <tr><td>Nowe panele</td><td>${newPanels} szt.</td></tr>
+      <tr><td>Koszt paneli</td><td>${formatCurrency(panelsCost)}</td></tr>
+      <tr><th>Łączny koszt inwestycji</th><th>${formatCurrency(totalCost)}</th></tr>
+    </table>
+  `;
 }
 </script>
 
