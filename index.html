@@ -26,11 +26,13 @@
   <input type="number" id="newPanels" value="0" min="0" step="1">
 </label>
 
-<label>Rabat (PLN):
+<button onclick="calculate()">Oblicz koszt</button>
+  <span id="toggleDiscount" style="cursor:pointer; font-size:20px; margin-left:10px;">⭐</span>
+
+<label id="discountBox" style="display:none; margin-top:10px;">
+  Rabat (PLN):
   <input type="number" id="rabat" value="0" step="1">
 </label>
-
-<button onclick="calculate()">Oblicz koszt</button>
 
 <div class="result" id="result"></div>
 
@@ -54,7 +56,7 @@ function calculate() {
       <p>Koszt wymiany falownika (${pvPower.toFixed(1)} kWp): ${inverterCost.toLocaleString()} PLN</p>
       <p>Koszt magazynu ${batterySize} kWh: ${batteryCost.toLocaleString()} PLN</p>
       <p>Koszt nowych paneli (${newPanels} szt.): ${panelsCost.toLocaleString()} PLN</p>
-      <p>Rabat: ${rabat.toLocaleString()} PLN</p>
+    
       <p><strong>Łączny koszt inwestycji: ${totalCost.toLocaleString()} PLN</strong></p>
     `;
 }
