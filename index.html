@@ -146,7 +146,7 @@ function calculate() {
 
   const batteryCost = batteryPrices[batterySize];
 
-  const inverterCost = {
+ const pvPrices = {
   3: 10000,
   4: 10500,
   5: 10500,
@@ -155,6 +155,7 @@ function calculate() {
   8: 11800,
   10: 12000
 };
+
   const panelsCost = newPanels * 500;
 
   // BACKUP
